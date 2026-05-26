@@ -1,0 +1,35 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model BatteryChemistry {
+  id             String            @id @default(uuid())
+  chemistryName  String            @unique
+  nominalVoltage Float
+  maxVoltage     Float
+  minVoltage     Float
+  energyDensity  Int
+  cycleLife      Int
+  safetyLevel    String
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+  configs        ChemistryConfig[]
+}
+
+model ChemistryConfig {
+  id                     String           @id @default(uuid())
+  vehicleModel           String
+  chargeCutoffVoltage    Float
+  dischargeCutoffVoltage Float
+  temperatureLimit       Float
+  firmwareVersion        String
+  isActive               Boolean          @default(true)
+  chemistryId            String
+  createdAt              DateTime         @default(now())
+  chemistry              BatteryChemistry @relation(fields: [chemistryId], references: [id])
+}
