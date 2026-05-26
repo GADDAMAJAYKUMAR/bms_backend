@@ -432,3 +432,5 @@ npm test        # Run tests (not yet configured)
 - Error responses in development mode include a `stack` trace field.
 - The `chemistryName` field must be **unique** across all battery chemistry records.
 - Creating a config requires a valid, existing `chemistryId`.
+#   b m s _ b a c k e n d  
+ 
