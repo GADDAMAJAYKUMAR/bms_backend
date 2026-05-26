@@ -8,28 +8,87 @@ datasource db {
 }
 
 model BatteryChemistry {
-  id             String            @id @default(uuid())
-  chemistryName  String            @unique
+  id             String @id @default(uuid())
+  chemistryName  String @unique
   nominalVoltage Float
   maxVoltage     Float
   minVoltage     Float
   energyDensity  Int
   cycleLife      Int
   safetyLevel    String
-  createdAt      DateTime          @default(now())
-  updatedAt      DateTime          @updatedAt
-  configs        ChemistryConfig[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // relations
+  configs ChemistryConfig[]
+
+  createdById String?
+  createdBy   User?   @relation("CreatedChemistries", fields: [createdById], references: [id])
 }
 
 model ChemistryConfig {
-  id                     String           @id @default(uuid())
+  id String @id @default(uuid())
+
   vehicleModel           String
   chargeCutoffVoltage    Float
   dischargeCutoffVoltage Float
   temperatureLimit       Float
   firmwareVersion        String
-  isActive               Boolean          @default(true)
-  chemistryId            String
-  createdAt              DateTime         @default(now())
-  chemistry              BatteryChemistry @relation(fields: [chemistryId], references: [id])
+
+  isActive Boolean @default(true)
+
+  createdAt DateTime @default(now())
+
+  chemistryId String
+  chemistry   BatteryChemistry @relation(fields: [chemistryId], references: [id])
+
+  // relations
+  createdById String?
+  createdBy   User?   @relation("CreatedConfigs", fields: [createdById], references: [id])
+}
+
+model User {
+  id                String   @id @default(uuid())
+
+  fullName          String
+  email             String   @unique
+
+  phoneNumber       String?  @unique
+
+  password          String?
+
+  profilePicture    String?
+
+  role              Role @default(USER)
+
+  authProvider      AuthProvider @default(LOCAL)
+  providerId        String?
+
+  isEmailVerified   Boolean @default(false)
+  isActive          Boolean @default(true)
+
+  acceptedTerms     Boolean @default(false)
+
+  refreshToken      String?
+
+  resetToken        String?
+  resetTokenExpiry  DateTime?
+
+  createdChemistries BatteryChemistry[] @relation("CreatedChemistries")
+  createdConfigs ChemistryConfig[] @relation("CreatedConfigs")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+enum AuthProvider {
+  LOCAL
+  GOOGLE
+  MICROSOFT
 }
