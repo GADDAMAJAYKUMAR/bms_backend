@@ -1,5 +1,5 @@
 import { BatteryRepository } from "../repositories/battery.repository";
-import { Prisma } from "@prisma/client";
+import type { BatteryChemistryCreateInput, BatteryChemistryUpdateInput, ChemistryConfigUncheckedCreateInput, ChemistryConfigUpdateInput } from "@prisma/client";
 
 export class BatteryService {
   private repo = new BatteryRepository();
@@ -13,7 +13,7 @@ export class BatteryService {
     return this.repo.findChemistryById(id);
   }
 
-  async createChemistry(data: Prisma.BatteryChemistryCreateInput) {
+  async createChemistry(data: BatteryChemistryCreateInput) {
     const existing = await this.repo.findChemistryByName(data.chemistryName);
     if (existing) {
       throw new Error(`Battery chemistry with name '${data.chemistryName}' already exists.`);

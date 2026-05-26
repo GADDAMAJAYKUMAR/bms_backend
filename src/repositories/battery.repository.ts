@@ -14,7 +14,10 @@ export class BatteryRepository {
     });
   }
 
-  async findChemistryByName(chemistryName: string) {
+  async findChemistryByName(chemistryName?: string) {
+    if (!chemistryName) {
+      return null;
+    }
     return prisma.batteryChemistry.findUnique({
       where: { chemistryName },
     });
@@ -34,9 +37,13 @@ export class BatteryRepository {
   }
 
   async deleteChemistry(id: string) {
-    return prisma.batteryChemistry.delete({
-      where: { id },
-    });
+    // First delete any ChemistryConfig rows that reference this chemistry
+    // to avoid foreign‑key violations.
+    // Using a transaction ensures both operations succeed or both roll back.
+    return prisma.$transaction([
+      prisma.chemistryConfig.deleteMany({ where: { chemistryId: id } }),
+      prisma.batteryChemistry.delete({ where: { id } }),
+    ]);
   }
 
   async createConfig(data: Prisma.ChemistryConfigUncheckedCreateInput) {
