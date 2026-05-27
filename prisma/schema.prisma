@@ -68,9 +68,12 @@ model User {
   isEmailVerified   Boolean @default(false)
   isActive          Boolean @default(true)
 
-  acceptedTerms     Boolean @default(false)
+  acceptedTerms     Boolean    @default(false)
 
   refreshToken      String?
+
+  loginAttempts     Int        @default(0)
+  lockUntil         DateTime?
 
   resetToken        String?
   resetTokenExpiry  DateTime?
@@ -91,4 +94,32 @@ enum AuthProvider {
   LOCAL
   GOOGLE
   MICROSOFT
+}
+
+
+model ThermalSafety{
+  id               Int             @id @default(autoincrement())
+  parameterName    String
+  thresholdValue   Float
+  actionName       String
+  
+  configs ThermalSafetyConfig[]
+
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model ThermalSafetyConfig{
+  id                 Int              @id @default(autoincrement())
+
+  vehicleName        String
+  customThreshold    Float
+  coolingEnabled     Boolean @default(false)
+  firmwareVersion    String?
+
+  thermalSafetyId     Int
+  thermalSafety ThermalSafety @relation(fields: [thermalSafetyId], references:[id])
+
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
 }

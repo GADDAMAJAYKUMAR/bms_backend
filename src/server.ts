@@ -1,3 +1,5 @@
+import './config/passport';
+import './config/microsoft.strategy';
 import dotenv from "dotenv";
 dotenv.config();
 

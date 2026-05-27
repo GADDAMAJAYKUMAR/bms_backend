@@ -65,4 +65,13 @@ router.get(
   .bind(controller)
 );
 
+router.get("/microsoft", passport.authenticate("azuread-openidconnect", {
+  scope: ["profile", "email"]
+}));
+
+router.get("/microsoft/callback", passport.authenticate("azuread-openidconnect", {
+  session: false
+}),
+controller.microsoftCallback.bind(controller));
+
 export default router;

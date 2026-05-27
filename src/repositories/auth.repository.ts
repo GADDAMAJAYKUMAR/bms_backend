@@ -67,5 +67,53 @@ async updatePassword(
   });
 }
 
+async updateLoginAttempts(
+  userId: string,
+  attempts: number
+) {
+
+  return prisma.user.update({
+    where: {
+      id: userId
+    },
+    data: {
+      loginAttempts: attempts
+    }
+  });
+
+}
+
+async lockUser(
+  userId: string,
+  lockUntil: Date
+) {
+
+  return prisma.user.update({
+    where: {
+      id: userId
+    },
+    data: {
+      lockUntil,
+      loginAttempts: 0
+    }
+  });
+
+}
+
+async resetLoginAttempts(
+  userId: string
+) {
+
+  return prisma.user.update({
+    where: {
+      id: userId
+    },
+    data: {
+      loginAttempts: 0,
+      lockUntil: null
+    }
+  });
+
+}
 
 }

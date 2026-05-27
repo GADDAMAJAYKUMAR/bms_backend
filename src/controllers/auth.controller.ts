@@ -125,4 +125,16 @@ export class AuthController {
 `${process.env.FRONTEND_URL}/auth-success?token=${token}`
   );
 }
+
+  microsoftCallback(req: any, res: any) {
+    const token = generateToken(
+      req.user.id,
+      req.user.email,
+      req.user.role
+    );
+
+    res.redirect(
+      `${process.env.FRONTEND_URL}/auth-success?token=${token}`
+    );
+  }
 }
